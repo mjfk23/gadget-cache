@@ -26,15 +26,11 @@
       "phpstan/phpstan": "^1.12",
       "phpstan/phpstan-strict-rules": "^1.6",
       "phpstan/extension-installer": "^1.4",
-      "squizlabs/php_codesniffer": "^3.10",
-      "symfony/config": "6.4.*",
-      "symfony/dependency-injection": "6.4.*",
-      "symfony/http-kernel": "6.4.*",
-      "symfony/yaml": "6.4.*"
+      "squizlabs/php_codesniffer": "^3.10"
     },
     "autoload": {
       "psr-4": {
-        "Gadget\\Cache\\": "src/"
+        "Gadget\\Cache\\": ["src/", "bundle/"]
       }
     },
     "config": {

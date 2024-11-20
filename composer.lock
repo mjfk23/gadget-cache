@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ddff1fef7d295c9df61cbf88e93fb4e5",
+    "content-hash": "d8a764074cd0bbe14edcc42422ae09c8",
     "packages": [
         {
             "name": "mjfk23/gadget-core",
