@@ -127,32 +127,24 @@ class CacheItemPool implements CacheItemPoolInterface
     /**
      * @param string|CacheItemInterface $keyOrItem
      * @param mixed $value
-     * @return CacheItemInterface
+     * @param int|\DateTimeInterface|null $expiresOn
+     * @return bool
      */
     public function setValue(
         string|CacheItemInterface $keyOrItem,
-        mixed $value
-    ): CacheItemInterface {
-        $cacheItem = $this->getCacheItem($keyOrItem);
-        return $cacheItem->set($value);
-    }
-
-
-    /**
-     * @param string|CacheItemInterface $keyOrItem
-     * @param int|\DateTimeInterface|null $expiresOn
-     */
-    public function setExpiresAt(
-        string|CacheItemInterface $keyOrItem,
-        int|\DateTimeInterface|null $expiresOn
-    ): CacheItemInterface {
-        return $this
-            ->getCacheItem($keyOrItem)
-            ->expiresAt(
-                is_int($expiresOn)
-                    ? (new \DateTime())->setTimestamp($expiresOn)
-                    : $expiresOn
-            );
+        mixed $value,
+        int|\DateTimeInterface|null $expiresOn = null
+    ): bool {
+        return $this->save(
+            $this
+                ->getCacheItem($keyOrItem)
+                ->set($value)
+                ->expiresAt(
+                    is_int($expiresOn)
+                        ? (new \DateTime())->setTimestamp($expiresOn)
+                        : $expiresOn
+                )
+        );
     }
 
 
