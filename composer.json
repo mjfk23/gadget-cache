@@ -28,7 +28,10 @@
   },
   "autoload": {
     "psr-4": {
-      "Gadget\\Cache\\": ["src/", "bundle/"]
+      "Gadget\\Cache\\": [
+        "src/",
+        "bundle/"
+      ]
     }
   },
   "config": {
