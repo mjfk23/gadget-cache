@@ -6,109 +6,20 @@ namespace Gadget\Cache;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\Cache\InvalidArgumentException;
 
-final class CacheItemPool
+class CacheItemPool implements CacheItemPoolInterface
 {
     /**
      * @param CacheItemPoolInterface $cache
      * @param string[] $namespace
+     * @param bool $manageKeys
      */
-    public function __construct(
+    final public function __construct(
         private CacheItemPoolInterface $cache,
-        private array $namespace = []
+        private array $namespace = [],
+        private bool $manageKeys = true
     ) {
-    }
-
-
-    /**
-     * @param string $namespace
-     * @return self
-     */
-    public function withNamespace(...$namespace): self
-    {
-        return new self(
-            $this->getCache(),
-            $namespace
-        );
-    }
-
-
-    /**
-     * @param string $key
-     * @return string
-     */
-    public function key(string $key): string
-    {
-        return hash('SHA256', implode("::", [...$this->namespace, $key]));
-    }
-
-
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    public function has(string $key): mixed
-    {
-        return $this->getItem($key)->isHit();
-    }
-
-
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    public function get(string $key): mixed
-    {
-        $item = $this->getItem($key);
-        return $item->isHit() ? $item->get() : null;
-    }
-
-
-    /**
-     * @template T of object
-     * @param string $key
-     * @param class-string<T> $class
-     * @return T|null
-     */
-    public function getObject(
-        string $key,
-        string $class
-    ): mixed {
-        $value = $this->get($key);
-        return (is_object($value) && is_a($value, $class)) ? $value : null;
-    }
-
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @param int|null $expires
-     * @return bool
-     */
-    public function set(
-        string $key,
-        mixed $value,
-        int|null $expires = null
-    ): bool {
-        if ($value === null) {
-            return $this->delete($key);
-        }
-
-        return $this->setItem(
-            $this->getItem($key)
-                ->set($value)
-                ->expiresAfter(is_int($expires) ? $expires - time() : null)
-        );
-    }
-
-
-    /**
-     * @param string $key
-     * @return bool
-     */
-    public function delete(string $key): bool
-    {
-        return $this->getCache()->deleteItem($this->key($key));
     }
 
 
@@ -122,12 +33,194 @@ final class CacheItemPool
 
 
     /**
+     * @return string[]
+     */
+    public function getNamespace(): array
+    {
+        return $this->namespace;
+    }
+
+
+    /**
+     * @param string $namespace
+     * @return self
+     */
+    public function withNamespace(string ...$namespace): self
+    {
+        return new static(
+            $this->getCache(),
+            [...$this->getNamespace(), ...$namespace],
+            $this->shouldManageKeys()
+        );
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function shouldManageKeys(): bool
+    {
+        return $this->manageKeys;
+    }
+
+
+    /**
+     * @param bool $manageKeys
+     * @return static
+     */
+    public function setManageKeys(bool $manageKeys): static
+    {
+        $this->manageKeys = $manageKeys;
+        return $this;
+    }
+
+
+    /**
      * @param string $key
+     * @return string
+     */
+    public function getKey(string $key): string
+    {
+        return $this->shouldManageKeys()
+            ? hash('SHA256', implode('::', [...$this->getNamespace(), $key]))
+            : $key;
+    }
+
+
+    /**
+     * @param string|CacheItemInterface $keyOrItem
      * @return CacheItemInterface
      */
-    protected function getItem(string $key): CacheItemInterface
+    protected function getCacheItem(string|CacheItemInterface $keyOrItem): CacheItemInterface
     {
-        return $this->getCache()->getItem($this->key($key));
+        return $keyOrItem instanceof CacheItemInterface
+            ? $keyOrItem
+            : $this->getItem($keyOrItem);
+    }
+
+
+    /**
+     * @param string|CacheItemInterface $keyOrItem
+     * @return mixed
+     */
+    public function getValue(string|CacheItemInterface $keyOrItem): mixed
+    {
+        $cacheItem = $this->getCacheItem($keyOrItem);
+        return $cacheItem->isHit() ? $cacheItem->get() : null;
+    }
+
+
+    /**
+     * @template T
+     * @param string|CacheItemInterface $keyOrItem
+     * @param (callable(mixed $value):(T|null)) $toValue
+     * @return T|null
+     */
+    public function getTypedValue(
+        string|CacheItemInterface $keyOrItem,
+        callable $toValue
+    ): mixed {
+        return $toValue($this->getValue($keyOrItem));
+    }
+
+
+    /**
+     * @param string|CacheItemInterface $keyOrItem
+     * @param mixed $value
+     * @return CacheItemInterface
+     */
+    public function setValue(
+        string|CacheItemInterface $keyOrItem,
+        mixed $value
+    ): CacheItemInterface {
+        $cacheItem = $this->getCacheItem($keyOrItem);
+        return $cacheItem->set($value);
+    }
+
+
+    /**
+     * @param string|CacheItemInterface $keyOrItem
+     * @param int|\DateTimeInterface|null $expiresOn
+     */
+    public function setExpiresAt(
+        string|CacheItemInterface $keyOrItem,
+        int|\DateTimeInterface|null $expiresOn
+    ): CacheItemInterface {
+        return $this
+            ->getCacheItem($keyOrItem)
+            ->expiresAt(
+                is_int($expiresOn)
+                    ? (new \DateTime())->setTimestamp($expiresOn)
+                    : $expiresOn
+            );
+    }
+
+
+    /**
+     * @param string $key
+     * @throws InvalidArgumentException
+     * @return CacheItemInterface
+     */
+    public function getItem(string $key): CacheItemInterface
+    {
+        $key = $this->getKey($key);
+        return $this->getCache()->getItem($key);
+    }
+
+
+    /**
+     * @param string[] $keys
+     * @throws InvalidArgumentException
+     * @return iterable<string,CacheItemInterface>
+     */
+    public function getItems(array $keys = []): iterable
+    {
+        foreach ($keys as $key) {
+            yield $key => $this->getItem($key);
+        }
+    }
+
+
+    /**
+     * @param string $key
+     * @throws InvalidArgumentException
+     * @return bool
+     */
+    public function hasItem(string $key): bool
+    {
+        $key = $this->getKey($key);
+        return $this->getCache()->hasItem($key);
+    }
+
+
+    /** @return bool */
+    public function clear(): bool
+    {
+        return $this->getCache()->clear();
+    }
+
+
+    /**
+     * @param string $key
+     * @throws InvalidArgumentException
+     * @return bool
+     */
+    public function deleteItem(string $key): bool
+    {
+        $key = $this->getKey($key);
+        return $this->getCache()->deleteItem($key);
+    }
+
+
+    /**
+     * @param string[] $keys
+     * @throws InvalidArgumentException
+     * @return bool
+     */
+    public function deleteItems(array $keys): bool
+    {
+        $keys = array_map($this->getKey(...), $keys);
+        return $this->getCache()->deleteItems($keys);
     }
 
 
@@ -135,8 +228,27 @@ final class CacheItemPool
      * @param CacheItemInterface $item
      * @return bool
      */
-    protected function setItem(CacheItemInterface $item): bool
+    public function save(CacheItemInterface $item): bool
     {
         return $this->getCache()->save($item);
+    }
+
+
+    /**
+     * @param CacheItemInterface $item
+     * @return bool
+     */
+    public function saveDeferred(CacheItemInterface $item): bool
+    {
+        return $this->getCache()->saveDeferred($item);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function commit(): bool
+    {
+        return $this->getCache()->commit();
     }
 }
