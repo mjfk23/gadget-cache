@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd7fd980db96fa334577cdad7e336abc",
+    "content-hash": "cd13db9d81b460e0b63c41324d35ff89",
     "packages": [
         {
             "name": "mjfk23/gadget-core",
@@ -1571,6 +1571,51 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "mjfk23/gadget-code-style",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mjfk23/gadget-code-style.git",
+                "reference": "11f49aad8444bee8ffcbee6b403da94416cf932d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mjfk23/gadget-code-style/zipball/11f49aad8444bee8ffcbee6b403da94416cf932d",
+                "reference": "11f49aad8444bee8ffcbee6b403da94416cf932d",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-strict-rules": "^2.0",
+                "squizlabs/php_codesniffer": "^3.10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Gadget\\CodeStyle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Melody Kimball",
+                    "role": "lead"
+                }
+            ],
+            "homepage": "https://github.com/mjfk23/gadget-code-style",
+            "support": {
+                "issues": "https://github.com/mjfk23/gadget-code-style/issues",
+                "source": "https://github.com/mjfk23/gadget-code-style",
+                "wiki": "https://github.com/mjfk23/gadget-code-style/wiki"
+            },
+            "time": "2024-12-18T20:17:58+00:00"
+        },
         {
             "name": "phpstan/extension-installer",
             "version": "1.4.3",
