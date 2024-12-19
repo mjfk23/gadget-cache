@@ -1,7 +1,3 @@
 services:
-  _defaults:
+  Gadget\Cache\CacheItemPool:
     autowire: true
-    autoconfigure: true
-
-  Gadget\Cache\:
-    resource: "../../../src/"
