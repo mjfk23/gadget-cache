@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "mjfk23/gadget-core",
-            "version": "v3.0.0-alpha.1",
+            "version": "v3.0.0-alpha.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mjfk23/gadget-core.git",
-                "reference": "163f5ae28849163a5c7a67aad350e8e95aa21541"
+                "reference": "62a8505e63304c68ac5c5f43d2364998c052d63c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mjfk23/gadget-core/zipball/163f5ae28849163a5c7a67aad350e8e95aa21541",
-                "reference": "163f5ae28849163a5c7a67aad350e8e95aa21541",
+                "url": "https://api.github.com/repos/mjfk23/gadget-core/zipball/62a8505e63304c68ac5c5f43d2364998c052d63c",
+                "reference": "62a8505e63304c68ac5c5f43d2364998c052d63c",
                 "shasum": ""
             },
             "require": {
@@ -54,7 +54,7 @@
                 "source": "https://github.com/mjfk23/gadget-core",
                 "wiki": "https://github.com/mjfk23/gadget-core/wiki"
             },
-            "time": "2024-12-19T13:18:45+00:00"
+            "time": "2024-12-20T16:11:55+00:00"
         },
         {
             "name": "mjfk23/symfony-bundle",
