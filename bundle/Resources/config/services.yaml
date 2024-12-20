@@ -1,10 +1,5 @@
 services:
-  Gadget\Cache\CacheItemPoolInterface: '@gadget_cache.cache_item_pool'
-  Gadget\Cache\CacheItemFactoryInterface: '@gadget_cache.cache_item_factory'
-
-  gadget_cache.cache_item_pool:
+  Gadget\Cache\CacheInterface: '@gadget.cache'
+  gadget.cache:
     autowire: true
-    class: Gadget\Cache\CacheItemPool
-  gadget_cache.cache_item_factory:
-    autowire: true
-    class: Gadget\Cache\CacheItemFactory
+    class: Gadget\Cache\Cache
