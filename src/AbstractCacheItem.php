@@ -39,7 +39,8 @@ abstract class AbstractCacheItem implements CacheItemInterface
      */
     public function set(mixed $value): static
     {
-        return $this->setCacheItem($this->getCacheItem()->set($value));
+        $this->getCacheItem()->set($value);
+        return $this;
     }
 
 
@@ -49,7 +50,8 @@ abstract class AbstractCacheItem implements CacheItemInterface
      */
     public function expiresAt(\DateTimeInterface|null $expiration): static
     {
-        return $this->setCacheItem($this->getCacheItem()->expiresAt($expiration));
+        $this->getCacheItem()->expiresAt($expiration);
+        return $this;
     }
 
 
@@ -59,6 +61,7 @@ abstract class AbstractCacheItem implements CacheItemInterface
      */
     public function expiresAfter(int|\DateInterval|null $time): static
     {
-        return $this->setCacheItem($this->getCacheItem()->expiresAfter($time));
+        $this->getCacheItem()->expiresAfter($time);
+        return $this;
     }
 }

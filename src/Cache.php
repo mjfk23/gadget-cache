@@ -7,29 +7,18 @@ namespace Gadget\Cache;
 use Psr\Cache\CacheItemInterface as PsrCacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface as PsrCacheItemPoolInterface;
 
-class CacheItemPool extends AbstractCacheItemPool
+class Cache extends AbstractCache
 {
     /**
-     * @param PsrCacheItemPoolInterface $cacheItemPool
-     * @param CacheItemFactoryInterface $cacheItemFactory
+     * @param PsrCacheItemPoolInterface $cache
      * @param string[] $namespace
      * @param bool $manageKeys
      */
     public function __construct(
-        private PsrCacheItemPoolInterface $cacheItemPool,
-        private CacheItemFactoryInterface $cacheItemFactory,
+        private PsrCacheItemPoolInterface $cache,
         private array $namespace = [],
         private bool $manageKeys = true
     ) {
-    }
-
-
-    /**
-     * @return CacheItemFactoryInterface
-     */
-    public function getCacheItemFactory(): CacheItemFactoryInterface
-    {
-        return $this->cacheItemFactory;
     }
 
 
@@ -49,8 +38,7 @@ class CacheItemPool extends AbstractCacheItemPool
     public function withNamespace(string ...$namespace): self
     {
         return new self(
-            $this->getCacheItemPool(),
-            $this->getCacheItemFactory(),
+            $this->getCache(),
             [...$this->getNamespace(), ...$namespace],
             $this->shouldManageKeys()
         );
@@ -80,9 +68,9 @@ class CacheItemPool extends AbstractCacheItemPool
     /**
      * @return PsrCacheItemPoolInterface
      */
-    public function getCacheItemPool(): PsrCacheItemPoolInterface
+    public function getCache(): PsrCacheItemPoolInterface
     {
-        return $this->cacheItemPool;
+        return $this->cache;
     }
 
 
@@ -109,11 +97,7 @@ class CacheItemPool extends AbstractCacheItemPool
      */
     public function getCacheItem(string|PsrCacheItemInterface $keyOrItem): CacheItemInterface
     {
-        return $this->getCacheItemFactory()->create($this, $keyOrItem);
-
-        // return $keyOrItem instanceof PsrCacheItemInterface
-        //     ? $keyOrItem
-        //     : $this->getItem($keyOrItem);
+        return new CacheItem($this, $keyOrItem);
     }
 
 

@@ -7,7 +7,7 @@ namespace Gadget\Cache;
 use Psr\Cache\CacheItemInterface as PsrCacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface as PsrCacheItemPoolInterface;
 
-interface CacheItemPoolInterface extends PsrCacheItemPoolInterface
+interface CacheInterface extends PsrCacheItemPoolInterface
 {
     /**
      * @return string[]
@@ -38,7 +38,7 @@ interface CacheItemPoolInterface extends PsrCacheItemPoolInterface
     /**
      * @return PsrCacheItemPoolInterface
      */
-    public function getCacheItemPool(): PsrCacheItemPoolInterface;
+    public function getCache(): PsrCacheItemPoolInterface;
 
 
     /**

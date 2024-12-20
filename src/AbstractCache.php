@@ -7,7 +7,7 @@ namespace Gadget\Cache;
 use Psr\Cache\CacheItemInterface as PsrCacheItemInterface;
 use Psr\Cache\InvalidArgumentException as PsrInvalidArgumentException;
 
-abstract class AbstractCacheItemPool implements CacheItemPoolInterface
+abstract class AbstractCache implements CacheInterface
 {
     /**
      * @param string $key
@@ -17,7 +17,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
     public function getItem(string $key): PsrCacheItemInterface
     {
         $key = $this->getCacheKey($key);
-        return $this->getCacheItemPool()->getItem($key);
+        return $this->getCache()->getItem($key);
     }
 
 
@@ -42,7 +42,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
     public function hasItem(string $key): bool
     {
         $key = $this->getCacheKey($key);
-        return $this->getCacheItemPool()->hasItem($key);
+        return $this->getCache()->hasItem($key);
     }
 
 
@@ -51,7 +51,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
      */
     public function clear(): bool
     {
-        return $this->getCacheItemPool()->clear();
+        return $this->getCache()->clear();
     }
 
 
@@ -63,7 +63,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
     public function deleteItem(string $key): bool
     {
         $key = $this->getCacheKey($key);
-        return $this->getCacheItemPool()->deleteItem($key);
+        return $this->getCache()->deleteItem($key);
     }
 
 
@@ -75,7 +75,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
     public function deleteItems(array $keys): bool
     {
         $keys = array_map($this->getCacheKey(...), $keys);
-        return $this->getCacheItemPool()->deleteItems($keys);
+        return $this->getCache()->deleteItems($keys);
     }
 
 
@@ -85,7 +85,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
      */
     public function save(PsrCacheItemInterface $item): bool
     {
-        return $this->getCacheItemPool()->save($item);
+        return $this->getCache()->save($item);
     }
 
 
@@ -95,7 +95,7 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
      */
     public function saveDeferred(PsrCacheItemInterface $item): bool
     {
-        return $this->getCacheItemPool()->saveDeferred($item);
+        return $this->getCache()->saveDeferred($item);
     }
 
 
@@ -104,6 +104,6 @@ abstract class AbstractCacheItemPool implements CacheItemPoolInterface
      */
     public function commit(): bool
     {
-        return $this->getCacheItemPool()->commit();
+        return $this->getCache()->commit();
     }
 }

@@ -8,11 +8,29 @@ use Psr\Cache\CacheItemInterface as PsrCacheItemInterface;
 
 class CacheItem extends AbstractCacheItem implements CacheItemInterface
 {
+    private PsrCacheItemInterface $cacheItem;
+
+
     /**
+     * @param CacheInterface $cache
      * @param PsrCacheItemInterface $cacheItem
      */
-    public function __construct(private PsrCacheItemInterface $cacheItem)
+    public function __construct(
+        private CacheInterface $cache,
+        string|PsrCacheItemInterface $cacheItem
+    ) {
+        $this->cacheItem = $cacheItem instanceof PsrCacheItemInterface
+            ? $cacheItem
+            : $cache->getCacheItem($cacheItem);
+    }
+
+
+    /**
+     * @return CacheInterface
+     */
+    public function getCache(): CacheInterface
     {
+        return $this->cache;
     }
 
 
@@ -22,17 +40,6 @@ class CacheItem extends AbstractCacheItem implements CacheItemInterface
     public function getCacheItem(): PsrCacheItemInterface
     {
         return $this->cacheItem;
-    }
-
-
-    /**
-     * @param PsrCacheItemInterface $cacheItem
-     * @return static
-     */
-    public function setCacheItem(PsrCacheItemInterface $cacheItem): static
-    {
-        $this->cacheItem = $cacheItem;
-        return $this;
     }
 
 
@@ -63,5 +70,15 @@ class CacheItem extends AbstractCacheItem implements CacheItemInterface
                     ? (new \DateTime())->setTimestamp($expiresOn)
                     : $expiresOn
             );
+    }
+
+
+    /**
+     * @param bool $deferred
+     * @return bool
+     */
+    public function saveCacheItem(bool $deferred = false): bool
+    {
+        return $this->getCache()->saveCacheItem($this, $deferred);
     }
 }

@@ -9,16 +9,15 @@ use Psr\Cache\CacheItemInterface as PsrCacheItemInterface;
 interface CacheItemInterface extends PsrCacheItemInterface
 {
     /**
-     * @return PsrCacheItemInterface
+     * @return CacheInterface
      */
-    public function getCacheItem(): PsrCacheItemInterface;
+    public function getCache(): CacheInterface;
 
 
     /**
-     * @param PsrCacheItemInterface $cacheItem
-     * @return static
+     * @return PsrCacheItemInterface
      */
-    public function setCacheItem(PsrCacheItemInterface $cacheItem): static;
+    public function getCacheItem(): PsrCacheItemInterface;
 
 
     /**
@@ -38,4 +37,11 @@ interface CacheItemInterface extends PsrCacheItemInterface
         mixed $value,
         int|\DateTimeInterface|null $expiresOn = null
     ): static;
+
+
+    /**
+     * @param bool $deferred
+     * @return bool
+     */
+    public function saveCacheItem(bool $deferred = false): bool;
 }

@@ -9,10 +9,11 @@ use Psr\Cache\CacheItemInterface as PsrCacheItemInterface;
 class CacheItemFactory implements CacheItemFactoryInterface
 {
     public function create(
-        CacheItemPoolInterface $cache,
+        CacheInterface $cache,
         string|PsrCacheItemInterface $keyOrItem
     ): CacheItemInterface {
         return new CacheItem(
+            $cache,
             $keyOrItem instanceof PsrCacheItemInterface
                 ? $keyOrItem
                 : $cache->getItem($keyOrItem)

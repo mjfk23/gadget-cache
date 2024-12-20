@@ -9,7 +9,7 @@ use Psr\Cache\CacheItemInterface as PsrCacheItemInterface;
 interface CacheItemFactoryInterface
 {
     public function create(
-        CacheItemPoolInterface $cache,
+        CacheInterface $cache,
         string|PsrCacheItemInterface $keyOrItem
     ): CacheItemInterface;
 }
